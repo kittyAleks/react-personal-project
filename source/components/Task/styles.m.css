@@ -45,6 +45,8 @@
 
     & .actions {
         min-width: 100px;
+        display: flex;
+        justify-content: space-between;
 
         & .toggleTaskFavoriteState,
         & .updateTaskMessageOnClick {
@@ -52,7 +54,7 @@
         }
     }
 
-    @media (width <= 740px) {
+    @media (width <=740px) {
         flex-direction: column-reverse;
         padding: 10px 5px;
         height: auto;
