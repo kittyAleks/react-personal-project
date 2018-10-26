@@ -3,42 +3,93 @@ import React, { Component } from 'react';
 
 // Components
 import Task from 'components/Task';
+import Spinner from "components/Spinner";
 
 //Svg
 import Checkbox from 'theme/assets/Checkbox.js';
 
 // Instruments
 import Styles from './styles.m.css';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import api from 'REST/api.js';
 
 export default class Scheduler extends Component {
   state = {
-      text: '',
+      tasksFilter:     '',
+      newTaskMessage:  '',
+      isTasksFetching: false,
+      tasks:           [],
   }
 
-_handleChangeText = (event) => this.setState({ text: event.target.value });
+  componentDidMount () {
+      this._fetchTasksAsync();
+  }
 
-_handleCreateTask = () => {
+_updateTasksFilter = (event) => this.setState({ tasksFilter: event.target.value.toLocaleLowerCase() });
 
+_updateNewTaskMessage = (event) => this.setState({ newTaskMessage: event.target.value });
+
+_setTasksFetchingState = (isTasksFetching) => this.setState({ isTasksFetching }); // метод крутит спинер
+
+_fetchTasksAsync = async () => {
+    try {
+        this._setTasksFetchingState(true);
+        const tasks = await api.fetchTasks();
+
+        this.setState({ tasks });
+    } catch ({ message }) {
+        console.log(message);
+    } finally {
+        this._setTasksFetchingState(false);
+    }
+};
+
+_createTaskAsync = async () => {
+    try {
+        this._setTasksFetchingState(true);
+    //const tasks = await api.fetchTasks();
+
+    //this.setState({ tasks });
+    } catch ({ message }) {
+        console.log(message);
+    } finally {
+        this._setTasksFetchingState(false);
+    }
+}
+
+_handleSubmit = (event) => {
+    event.preventDefault(); // при нажатии button блокирует станд-е поведение перезагрузки страницы
+    const { newTaskMessage } = this.state;
+
+    if (newTaskMessage) {
+        this.setState(({ tasks }) => ({
+            tasks:          [{ message: newTaskMessage }, ...tasks],
+            newTaskMessage: '',
+        }));
+    }
 }
 
 render () {
-    const { text } = this.state;
+    const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
 
     return (
         <section className = { Styles.scheduler }>
+            { isTasksFetching && <Spinner /> }
             <main>
                 <header>
                     <h1>Планировщик задач</h1>
-                    <input />
+                    <input value = { tasksFilter } onChange = { this._updateTasksFilter } />
                 </header>
                 <section>
-                    <form>
-                        <input type = 'text' value = { text } onChange = { this._handleChangeText } />
-                        <button onClick = { this._handleCreateTask }>Добавить задачу</button>
+                    <form onSubmit = { this._handleSubmit }>
+                        <input type = 'text' value = { newTaskMessage } onChange = { this._updateNewTaskMessage } />
+                        <button>Добавить задачу</button>
                     </form>
                     <ul>
-                        <Task />
+                        {
+                            tasks.map((task, index) => {
+                                return <Task key = { index } { ...task } />;
+                            })
+                        }
                     </ul>
                 </section>
                 <footer>

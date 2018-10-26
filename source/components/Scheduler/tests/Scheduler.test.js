@@ -109,7 +109,7 @@ describe('Компонент Scheduler:', () => {
             });
         });
 
-        describe('_getAllCompleted', () => {
+        describe('_getAllCompleted', () => { // TODO:
             afterEach(() => {
                 result.setState(initialState);
                 jest.clearAllMocks();
