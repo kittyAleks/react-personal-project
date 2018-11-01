@@ -246,7 +246,7 @@ describe('Компонент Scheduler:', () => {
             });
         });
 
-        describe('_updateTaskAsync', () => {
+        describe('_updateTaskAsync', () => { //// TODO:
             afterAll(() => {
                 result.setState(initialState);
                 jest.clearAllMocks();

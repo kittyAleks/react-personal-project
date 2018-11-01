@@ -18,40 +18,57 @@ export default new class Api {
 
         return data;
     }
+    //--------------------------------------------------------------
+    async createTask (message) {
+        const response = await fetch(MAIN_URL, {
+            method:  'POST',
+            headers: {
+                authorization:  TOKEN,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({ message }),
+        });
 
-    // async createPost(comment) {
-    //     const response = await fetch(MAIN_URL, {
-    //         method:  'POST',
-    //         headers: {
-    //             authorization:  TOKEN,
-    //             'content-type': 'application/json',
-    //         },
-    //         body: JSON.stringify({comment}),
-    //     });
-    //
-    //     if (response.status !== 200) {
-    //         throw new Error('Post were not created.');
-    //     }
-    //     const {data: post } = await response.json();
-    //
-    //     return post;
-    // }
+        if (response.status !== 200) {
+            throw new Error('Create task failed');
+        }
+        const { data } = await response.json();
 
-    // async removePost(id) { // ф-я удаляет мои комменты
-    //     const response = await fetch(`${ MAIN_URL }/${ id }`, {
-    //         method:  'DELETE',
-    //         headers: {
-    //             authorization:  TOKEN,
-    //             'content-type': 'application/json',
-    //         },
-    //     });
-    //
-    //     if (response.status !== 204) {
-    //         throw new Error('Delete were not deleted.');
-    //     }
-    //     // const {data: post } = await response.json();
-    //
-    //     return true;
-    // }
+        return data;
+    }
+    //--------------------------------------------------------------
+
+    async removeTask (id) { // ф-я удаляет мои todo
+        const response = await fetch(`${MAIN_URL}/${id}`, {
+            method:  'DELETE',
+            headers: {
+                authorization: TOKEN,
+            },
+        });
+
+        if (response.status !== 204) {
+            throw new Error('Task were not deleted.');
+        }
+
+        return true;
+    }
+
+    async updateTask (arr) {
+        const response = await fetch(MAIN_URL, {
+            method:  'PUT',
+            headers: {
+                authorization:  TOKEN,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify(arr),
+        });
+
+        if (response.status !== 200) {
+            throw new Error('Update task failed');
+        }
+        const { data } = await response.json();
+
+        return data;
+    }
 
 }();

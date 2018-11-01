@@ -12,36 +12,68 @@ import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
 
-    render () {
-        const { message } = this.props;
+  _removeTask = () => this.props._removeTaskAsync(this.props.id);
 
-        return (
-            <li className = { Styles.task }>
-                <div className = { Styles.content }>
-                    <Checkbox
-                        className = { Styles.toggleTaskCompletedState }
-                        color1 = '#3B8EF3'
-                        color2 = 'white'
-                    />
-                    <span>{message}</span>
+  _toggleTaskFavoriteState = () => {
+      const { _updateTaskAsync, id, message, completed, favorite } = this.props;
 
-                </div>
-                <div className = { Styles.actions }>
-                    <Star
-                        color1 = '#3B8EF3'
-                        color2 = 'black'
-                    />
-                    <Edit
-                        color1 = '#3B8EF3'
-                        color2 = 'black'
-                    />
-                    <Remove
-                        color1 = '#3B8EF3'
-                        color2 = 'black'
-                    />
-                </div>
-            </li>
-        );
+      _updateTaskAsync([
+          {
+              id,
+              message,
+              completed,
+              favorite: !favorite,
+          }
+      ]);
+  }
+  _toggleTaskCompletedState = () => {
+      const { _updateTaskAsync, id, message, completed, favorite } = this.props;
 
-    }
+      _updateTaskAsync([
+          {
+              id,
+              message,
+              completed: !completed,
+              favorite,
+          }
+      ]);
+  }
+
+  render () {
+      const { message, favorite, completed } = this.props;
+
+      return (
+          <li className = { Styles.task }>
+              <div className = { Styles.content }>
+                  <Checkbox
+                      checked = { completed }
+                      className = { Styles.toggleTaskCompletedState }
+                      color1 = '#3B8EF3'
+                      color2 = 'white'
+                      onClick = { this._toggleTaskCompletedState }
+                  />
+                  <span>{message}</span>
+
+              </div>
+              <div className = { Styles.actions }>
+                  <Star
+                      checked = { favorite }
+                      color1 = '#3B8EF3'
+                      color2 = 'black'
+                      onClick = { this._toggleTaskFavoriteState }
+                  />
+                  <Edit
+                      color1 = '#3B8EF3'
+                      color2 = 'black'
+                  />
+                  <Remove
+                      color1 = '#3B8EF3'
+                      color2 = 'black'
+                      onClick = { this._removeTask }
+                  />
+              </div>
+          </li>
+      );
+
+  }
 }

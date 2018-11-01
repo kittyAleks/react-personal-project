@@ -32,41 +32,88 @@ _setTasksFetchingState = (isTasksFetching) => this.setState({ isTasksFetching })
 
 _fetchTasksAsync = async () => {
     try {
-        this._setTasksFetchingState(true);
+        this._setTasksFetchingState(true); // начинаем крутить спинер
         const tasks = await api.fetchTasks();
 
         this.setState({ tasks });
     } catch ({ message }) {
         console.log(message);
     } finally {
-        this._setTasksFetchingState(false);
+        this._setTasksFetchingState(false); // прекращаем крутить спинер
     }
 };
 
-_createTaskAsync = async () => {
+_createTaskAsync = async (event) => {
+    event.preventDefault(); // при нажатии button блокирует станд-е поведение перезагрузки страницы
+    const { newTaskMessage } = this.state;
+
+    if (newTaskMessage) {
+        try {
+            this._setTasksFetchingState(true);
+            const task = await api.createTask(newTaskMessage);
+
+            this.setState((state) => ({
+                tasks:          [task, ...state.tasks],
+                newTaskMessage: '',
+            }));
+        } catch ({ message }) {
+            console.log(message);
+        } finally {
+            this._setTasksFetchingState(false);
+        }
+    }
+
+    return null;
+}
+
+_removeTaskAsync = async (id) => {
     try {
         this._setTasksFetchingState(true);
-    //const tasks = await api.fetchTasks();
+        await api.removeTask(id);
 
-    //this.setState({ tasks });
+        this.setState(({ tasks }) => ({
+            tasks: tasks.filter((task) => task.id !== id),
+        }));
+
     } catch ({ message }) {
         console.log(message);
     } finally {
         this._setTasksFetchingState(false);
     }
+
+    return null;
 }
 
-_handleSubmit = (event) => {
-    event.preventDefault(); // при нажатии button блокирует станд-е поведение перезагрузки страницы
-    const { newTaskMessage } = this.state;
+_updateTaskAsync = async (arr) => {
+    try {
+        this._setTasksFetchingState(true);
+        const data = await api.updateTask(arr);
 
-    if (newTaskMessage) {
         this.setState(({ tasks }) => ({
-            tasks:          [{ message: newTaskMessage }, ...tasks],
-            newTaskMessage: '',
+            tasks: tasks.map((task) => {
+                if (data[0].id === task.id) {
+                    return data[0];
+                }
+
+                return task;
+            }),
         }));
+
+    } catch ({ message }) {
+        console.log(message);
+    } finally {
+        this._setTasksFetchingState(false);
     }
+
+    return null;
 }
+
+// _handleSubmit = (event) => {
+//
+//     if (newTaskMessage) {
+
+//     }
+// }
 
 render () {
     const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
@@ -80,15 +127,20 @@ render () {
                     <input value = { tasksFilter } onChange = { this._updateTasksFilter } />
                 </header>
                 <section>
-                    <form onSubmit = { this._handleSubmit }>
+                    <form onSubmit = { this._createTaskAsync }>
                         <input type = 'text' value = { newTaskMessage } onChange = { this._updateNewTaskMessage } />
                         <button>Добавить задачу</button>
                     </form>
                     <ul>
                         {
-                            tasks.map((task, index) => {
-                                return <Task key = { index } { ...task } />;
-                            })
+                            tasks.map((task) => (
+                                <Task
+                                    key = { task.id }
+                                    { ...task }
+                                    _removeTaskAsync = { this._removeTaskAsync }
+                                    _updateTaskAsync = { this._updateTaskAsync }
+                                />)
+                            )
                         }
                     </ul>
                 </section>
