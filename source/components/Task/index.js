@@ -1,5 +1,6 @@
 // Core
 import React, { PureComponent } from 'react';
+///import cx from 'classnames';
 
 // svg
 import Checkbox from 'theme/assets/Checkbox.js';
@@ -13,8 +14,14 @@ import Styles from './styles.m.css';
 export default class Task extends PureComponent {
 
     render () {
-        const { message } = this.props;
+        const { message, completed } = this.props;
 
+/*
+        const styles = cx(Styles.task, {
+            [Styles.completed]: completed,
+        });
+
+*/
         return (
             <li className = { Styles.task }>
                 <div className = { Styles.content }>
