@@ -31,6 +31,7 @@ _updateNewTaskMessage = (event) => this.setState({ newTaskMessage: event.target.
 _setTasksFetchingState = (isTasksFetching) => this.setState({ isTasksFetching }); // метод крутит спинер
 
 _fetchTasksAsync = async () => {
+    //console.time("_fetchTasksAsync") time - проверяет сколько работает ф-я от и до
     try {
         this._setTasksFetchingState(true); // начинаем крутить спинер
         const tasks = await api.fetchTasks();
@@ -41,6 +42,7 @@ _fetchTasksAsync = async () => {
     } finally {
         this._setTasksFetchingState(false); // прекращаем крутить спинер
     }
+    //console.timeEnd("_fetchTasksAsync");
 };
 
 _createTaskAsync = async (event) => {

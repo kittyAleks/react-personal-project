@@ -1,5 +1,6 @@
 // Core
 import React, { PureComponent } from 'react';
+///import cx from 'classnames';
 
 // svg
 import Checkbox from 'theme/assets/Checkbox.js';
@@ -12,6 +13,7 @@ import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
 
+<<<<<<< HEAD
   _removeTask = () => this.props._removeTaskAsync(this.props.id);
 
   _toggleTaskFavoriteState = () => {
@@ -76,4 +78,44 @@ export default class Task extends PureComponent {
       );
 
   }
+=======
+    render () {
+        const { message, completed } = this.props;
+
+/*
+        const styles = cx(Styles.task, {
+            [Styles.completed]: completed,
+        });
+
+*/
+        return (
+            <li className = { Styles.task }>
+                <div className = { Styles.content }>
+                    <Checkbox
+                        className = { Styles.toggleTaskCompletedState }
+                        color1 = '#3B8EF3'
+                        color2 = 'white'
+                    />
+                    <span>{message}</span>
+
+                </div>
+                <div className = { Styles.actions }>
+                    <Star
+                        color1 = '#3B8EF3'
+                        color2 = 'black'
+                    />
+                    <Edit
+                        color1 = '#3B8EF3'
+                        color2 = 'black'
+                    />
+                    <Remove
+                        color1 = '#3B8EF3'
+                        color2 = 'black'
+                    />
+                </div>
+            </li>
+        );
+
+    }
+>>>>>>> a4ef56c69253f39a45f13b1607dbb4a2973071c4
 }
