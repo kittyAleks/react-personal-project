@@ -26,7 +26,8 @@ export default class Scheduler extends Component {
 
 _updateTasksFilter = (event) => this.setState({ tasksFilter: event.target.value.toLocaleLowerCase() });
 
-_updateNewTaskMessage = (event) => this.setState({ newTaskMessage: event.target.value });
+_updateNewTaskMessage = (event) => event.target.value.length <= 50 &&
+    this.setState({ newTaskMessage: event.target.value });
 
 _setTasksFetchingState = (isTasksFetching) => this.setState({ isTasksFetching }); // метод крутит спинер
 
@@ -108,19 +109,12 @@ _updateTaskAsync = async (arr) => {
     return null;
 }
 
-// _handleSubmit = (event) => {
-//
-//     if (newTaskMessage) {
-
-//     }
-// }
-
 render () {
     const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
 
     return (
         <section className = { Styles.scheduler }>
-            { isTasksFetching && <Spinner /> }
+            { isTasksFetching ? <Spinner /> : null }
             <main>
                 <header>
                     <h1>Планировщик задач</h1>
@@ -128,19 +122,26 @@ render () {
                 </header>
                 <section>
                     <form onSubmit = { this._createTaskAsync }>
-                        <input type = 'text' value = { newTaskMessage } onChange = { this._updateNewTaskMessage } />
+                        <input
+                            type = 'text'
+                            value = { newTaskMessage }
+                            onChange = { this._updateNewTaskMessage }
+                        />
                         <button>Добавить задачу</button>
                     </form>
                     <ul>
                         {
-                            tasks.map((task) => (
-                                <Task
-                                    key = { task.id }
-                                    { ...task }
-                                    _removeTaskAsync = { this._removeTaskAsync }
-                                    _updateTaskAsync = { this._updateTaskAsync }
-                                />)
-                            )
+                            tasks
+                                .sort((a, b) => a.completed > b.completed || a.favorite < b.favorite && a.completed === b.completed ? 1 : -1)
+                                .filter(({ message }) => message.toLocaleLowerCase().includes(tasksFilter))
+                                .map((task) => (
+                                    <Task
+                                        key = { task.id }
+                                        { ...task }
+                                        _removeTaskAsync = { this._removeTaskAsync }
+                                        _updateTaskAsync = { this._updateTaskAsync }
+                                    />)
+                                )
                         }
                     </ul>
                 </section>

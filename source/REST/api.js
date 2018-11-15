@@ -18,7 +18,7 @@ export default new class Api {
 
         return data;
     }
-    //--------------------------------------------------------------
+
     async createTask (message) {
         const response = await fetch(MAIN_URL, {
             method:  'POST',
@@ -36,7 +36,6 @@ export default new class Api {
 
         return data;
     }
-    //--------------------------------------------------------------
 
     async removeTask (id) { // ф-я удаляет мои todo
         const response = await fetch(`${MAIN_URL}/${id}`, {
