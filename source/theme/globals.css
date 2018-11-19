@@ -4,7 +4,8 @@
 }
 
 body {
-    background-color: var(--paletteColor3);
+    /* background-color: var(--paletteColor3);*/
+    background-image: url('../theme/image/img.jpg');
     
     font-family: roboto mono, roboto, system-ui;
 

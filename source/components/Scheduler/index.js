@@ -107,7 +107,31 @@ _updateTaskAsync = async (arr) => {
     }
 
     return null;
-}
+};
+
+_completeAllTasksAsync = async () => {
+    try {
+        const isCompleted = this._getAllCompleted();
+
+        if (isCompleted) {
+            return null;
+        }
+
+        this._setTasksFetchingState(true);
+
+        await api.completeAllTasks(this.state.tasks);
+
+        this.setState(({ tasks }) => ({
+            tasks: sortTasksByGroup(
+                tasks.map((task) => ({ ...task, completed: true }))
+            ),
+        }));
+    } catch (error) {
+        console.log(error.message);
+    } finally {
+        this._setTasksFetchingState(false);//
+    }
+};
 
 render () {
     const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
@@ -150,6 +174,7 @@ render () {
                         <Checkbox
                             color1 = 'black'
                             color2 = 'white'
+                            onClick = { this._completeAllTasksAsync }
                         />
                     </div>
                     <span>Все задачи выполнены</span>

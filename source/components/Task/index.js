@@ -36,7 +36,7 @@ export default class Task extends PureComponent {
               favorite: !favorite,
           }
       ]);
-  }
+  };
 
     _toggleTaskCompletedState = () => {
         const { message } = this.state;
@@ -50,7 +50,7 @@ export default class Task extends PureComponent {
                 favorite,
             }
         ]);
-    }
+    };
 
     _openEditMode = () => this.setState({ isEditMode: true }, () => this.input.current && this.input.current.focus());
 
